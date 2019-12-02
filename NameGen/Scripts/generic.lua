@@ -15,10 +15,10 @@ function generic.GetName()
 		generic.loadLastNames();
 	end
 	local count = utilities.tablelength(generic.FirstNames);
-	--log.LogInfo("generic.lua", tostring(count) .. " first names...");
+	--csLog.LogInfo("generic.lua", tostring(count) .. " first names...");
 	local first = generic.FirstNames[math.random(1, count)];
 	count = utilities.tablelength(generic.LastNames);
-	--log.LogInfo("generic.lua", tostring(count) .. " last names...");
+	--csLog.LogInfo("generic.lua", tostring(count) .. " last names...");
 	local last = generic.LastNames[math.random(1, count)];
 	local name = tostring(first) .. " " .. tostring(last);
 	return name;

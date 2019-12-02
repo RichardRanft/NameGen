@@ -26,7 +26,7 @@ namespace NameGen
             {
                 m_luaInterface = new CLInterface();
                 m_luaLog = new CLuaLog();
-                m_luaInterface.RegisterObject("log", m_luaLog);
+                m_luaInterface.RegisterObject("csLog", m_luaLog);
             }
             catch (Exception ex)
             {

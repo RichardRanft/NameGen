@@ -15,9 +15,9 @@ function Illumian.GetName()
 		Illumian.loadClanNames();
 	end
 	local first = Illumian.GetPersonalName();
-	first = first:gsub("^%l", string.upper);
+	first = first:gsub("^%l", string.upper); -- uppercase first character
 	local last = Illumian.GetClanName();
-	last = last:gsub("^%l", string.upper);
+	last = last:gsub("^%l", string.upper); -- uppercase first character
 	local name = tostring(last) .. " " .. tostring(first);
 	return name;
 end
@@ -25,7 +25,6 @@ end
 function Illumian.GetPersonalName()
 	local name = "";
 	local count = utilities.tablelength(Illumian.Syllables);
-	--csLog.LogInfo("Illumian.lua", tostring(count) .. " Syllables...");
 	local scount = math.random(2, 3);
 	for i = 1, scount do
 		name = name .. Illumian.Syllables[math.random(1, count)];
@@ -45,6 +44,8 @@ function Illumian.loadSyllables()
 	local handle, msg, err = io.open("data\\CSV_Illuminan_Syllables.csv");
 	math.randomseed(tonumber(os.time()));
 	if handle == nil then
+		csLog.LogError("Illumian.lua", "Unable to open data\\CSV_Illuminan_Syllables.csv");
+		csLog.LogError(tostring(err) .. ": ".. tostring(msg));
 	else
 		local buffer = handle:read();
 		handle:close();
@@ -55,6 +56,8 @@ end
 function Illumian.loadClanNames()
 	local handle, msg, err = io.open("data\\CSV_Illuminan_Clans.csv");
 	if handle == nil then
+		csLog.LogError("Illumian.lua", "Unable to open data\\CSV_Illuminan_Clans.csv");
+		csLog.LogError(tostring(err) .. ": ".. tostring(msg));
 	else
 		for line in handle:lines() do
 			local entries = utilities.split(line, '[^,]+');

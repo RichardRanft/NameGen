@@ -41,11 +41,13 @@ namespace NameGen
             String localPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             m_log.Info("Loading main scripts...");
             Queue<String> mainscripts = new Queue<String>();
-            mainscripts.Enqueue(localPath + "\\utilities.lua");
+            String[] commonScripts = Directory.GetFiles(localPath, "*.lua");
+            foreach(String script in commonScripts)
+                mainscripts.Enqueue(script);
             while (mainscripts.Count > 0)
             {
                 String file = mainscripts.Dequeue();
-                m_log.Info(String.Format("Loading {0}...", file));
+                m_log.Info(String.Format("* {0}...", file));
                 m_luaInterface.LoadScript(file);
             }
             List<String> baseList = m_luaInterface.GetTables();
@@ -57,7 +59,7 @@ namespace NameGen
                 String[] files = Directory.GetFiles(scriptPath, "*.lua");
                 foreach (String file in files)
                 {
-                    m_log.Info(String.Format("Loading {0}...", file));
+                    m_log.Info(String.Format("* {0}...", file));
                     m_luaInterface.LoadScript(file);
                 }
             }
@@ -88,52 +90,60 @@ namespace NameGen
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(!Directory.Exists("Lists"))
+            if (!Directory.Exists("Lists"))
             {
                 try
                 {
                     Directory.CreateDirectory("Lists");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     m_log.Error("Unable to create directory:", ex);
                     return;
                 }
-                String[] files = Directory.GetFiles(".\\Lists", "*.txt");
-                int index = 1;
-                if(files.Length > 0)
+            }
+            String[] files = Directory.GetFiles(".\\Lists", "*.txt");
+            int index = 1;
+            if(files.Length > 0)
+            {
+                foreach (String file in files)
                 {
-                    foreach (String file in files)
+                    String[] parts = file.Split('_');
+                    if (parts.Length < 2)
+                        continue;
+                    String[] subparts = parts[1].Split('.');
+                    try
                     {
-                        String[] parts = file.Split('_');
-                        if (parts.Length < 2)
-                            continue;
-                        String[] subparts = parts[1].Split('.');
-                        try
-                        {
-                            int filenum = int.Parse(subparts[0]);
-                            if (filenum > index)
-                                index = filenum;
-                        }
-                        catch(Exception ex)
-                        {
-                            continue;
-                        }
+                        int filenum = int.Parse(subparts[0]);
+                        if (filenum > index)
+                            index = filenum;
+                    }
+                    catch(Exception ex)
+                    {
+                        continue;
                     }
                 }
-                String method = cbxGenMethod.Text + ".GetName";
-                List<String> names = new List<String>();
-                for(int i = 0; i < (int)nudGenCount.Value; ++i)
-                {
-                    object[] res = m_luaInterface.Call(method, null);
-                    names.Add((String)res[0]);
-                }
-                String outfile = String.Format(".\\Lists\\namelist_{0}.txt", index);
+                ++index;
+            }
+            String method = cbxGenMethod.Text + ".GetName";
+            List<String> names = new List<String>();
+            for(int i = 0; i < (int)nudGenCount.Value; ++i)
+            {
+                object[] res = m_luaInterface.Call(method, null);
+                names.Add((String)res[0]);
+            }
+            String outfile = String.Format(".\\Lists\\namelist_{0}.txt", index);
+            try
+            {
                 using (StreamWriter sw = new StreamWriter(outfile))
                 {
                     foreach (String name in names)
                         sw.WriteLine(name);
                 }
+            }
+            catch(Exception ex)
+            {
+                m_log.Error("Error writing " + outfile, ex);
             }
         }
 

@@ -82,7 +82,61 @@ namespace NameGen
 
         private void button1_Click(object sender, EventArgs e)
         {
-            m_luaInterface.DumpGTable();
+            if (!Directory.Exists("Lists"))
+            {
+                try
+                {
+                    Directory.CreateDirectory("Lists");
+                }
+                catch (Exception ex)
+                {
+                    m_log.Error("Unable to create directory:", ex);
+                    return;
+                }
+            }
+            String[] files = Directory.GetFiles(".\\Lists", "*.txt");
+            int index = 1;
+            if (files.Length > 0)
+            {
+                foreach (String file in files)
+                {
+                    String[] parts = file.Split('_');
+                    if (parts.Length < 2)
+                        continue;
+                    String[] subparts = parts[1].Split('.');
+                    try
+                    {
+                        int filenum = int.Parse(subparts[0]);
+                        if (filenum > index)
+                            index = filenum;
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
+                }
+                ++index;
+            }
+            String method = cbxGenMethod.Text + ".GetName";
+            List<String> names = new List<String>();
+            for (int i = 0; i < (int)nudGenCount.Value; ++i)
+            {
+                object[] res = m_luaInterface.Call(method, null);
+                names.Add((String)res[0]);
+            }
+            String outfile = String.Format(".\\Lists\\namelist_{0}.txt", index);
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(outfile))
+                {
+                    foreach (String name in names)
+                        sw.WriteLine(name);
+                }
+            }
+            catch (Exception ex)
+            {
+                m_log.Error("Error writing " + outfile, ex);
+            }
         }
 
         private void btnGenerate_Click(object sender, EventArgs e)

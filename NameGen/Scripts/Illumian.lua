@@ -6,6 +6,7 @@ Illumian = {};
 
 Illumian["Syllables"] = {};
 Illumian["ClanNames"] = {};
+Illumian["ClanParts"] = {};
 
 function Illumian.GetName(namecount)
 	if namecount == nil then
@@ -17,6 +18,9 @@ function Illumian.GetName(namecount)
 	end
 	if utilities.tablelength(Illumian.ClanNames) < 1 then
 		Illumian.loadClanNames();
+	end
+	if utilities.tablelength(Illumian.ClanParts) < 1 then
+		Illumian.loadClanParts();
 	end
 	local names = {};
 	for i = 1, namecount do
@@ -46,7 +50,15 @@ end
 function Illumian.GetClanName()
 	local count1 = utilities.tablelength(Illumian.ClanNames[1]);
 	local count2 = utilities.tablelength(Illumian.ClanNames[2]);
-	local clan = Illumian.ClanNames[1][math.random(1, count1)] .. Illumian.ClanNames[2][math.random(1, count2)];
+	local clan1 = Illumian.ClanNames[1][math.random(1, count1)];
+	local clan2 = Illumian.ClanNames[2][math.random(1, count2)];
+	if string.find(clan1, "%[") ~= nil then
+		clan1 = Illumian.ClanParts[clan1][math.random(1, utilities.tablelength(Illumian.ClanParts[clan1]))];
+	end
+	if string.find(clan2, "%[") ~= nil then
+		clan2 = Illumian.ClanParts[clan2][math.random(1, utilities.tablelength(Illumian.ClanParts[clan2]))];
+	end
+	local clan = clan1 .. clan2;
 	return clan;
 end
 
@@ -72,6 +84,31 @@ function Illumian.loadClanNames()
 		for line in handle:lines() do
 			local entries = utilities.split(line, '[^,]+');
 			table.insert(Illumian.ClanNames, entries);
+		end
+		handle:close();
+	end
+end
+
+function Illumian.loadClanParts()
+	--csLog.LogInfo("Illumian.lua", "loadClanParts()");
+	local handle, msg, err = io.open("data\\CSV_Illuminan_Clan_Parts.csv");
+	if handle == nil then
+		csLog.LogError("Illumian.lua", "Unable to open data\\CSV_Illuminan_Clan_Parts.csv");
+		csLog.LogError(tostring(err) .. ": ".. tostring(msg));
+	else
+		local currTable = "";
+		for line in handle:lines() do
+			if string.find(line, "%[") ~= nil then
+				currTable = line;
+				Illumian.ClanParts[currTable] = {};
+				--csLog.LogInfo("Illumian.lua", "loadClanParts() - Adding table " .. currTable);
+			else
+				local entries = utilities.split(line, '[^,]+');
+				for entry in utilities.list_iter(entries) do
+					--csLog.LogInfo("Illumian.lua", "loadClanParts() - Adding " .. tostring(entry) .. " to " .. tostring(currTable));
+					table.insert(Illumian.ClanParts[currTable], entry);
+				end
+			end
 		end
 		handle:close();
 	end

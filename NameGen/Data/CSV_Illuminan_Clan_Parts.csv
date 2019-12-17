@@ -1,0 +1,16 @@
+[color]
+red,green,black,yellow,gold,blue,violet
+[ordinal]
+first,second,third,fourth,fifth,sixth,seventh,eighth,ninth,tenth
+[gem]
+ruby,saphirre,opal,garnet,diamond,emerald
+[plane]
+astral,ethereal,hell,limbo,chaos,nirvana,fire,earth,air,water
+[season]
+autumn,winter,summer,spring
+[plant]
+oak,pine,rose,orchid,lily,evergreen,sage,ivy
+[weapon]
+axe,sword,halbard,bow,staff,fist
+[instrument]
+horn,trumpet,flute,lyre,harp,lute

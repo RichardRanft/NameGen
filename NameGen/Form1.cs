@@ -119,10 +119,17 @@ namespace NameGen
             }
             String method = cbxGenMethod.Text + ".GetName";
             List<String> names = new List<String>();
-            for (int i = 0; i < (int)nudGenCount.Value; ++i)
+            object[] res = m_luaInterface.Call(method, new object[] { nudGenCount.Value });
+            try
             {
-                object[] res = m_luaInterface.Call(method, null);
-                names.Add((String)res[0]);
+                LuaInterface.LuaTable namelist = (LuaInterface.LuaTable)res[0];
+                foreach (object key in namelist.Keys)
+                    names.Add(namelist[key].ToString());
+            }
+            catch(Exception ex)
+            {
+                m_log.Error("Unable to convert " + cbxGenMethod.Text + ".GetName() result to a Lua table.", ex);
+                return;
             }
             String outfile = String.Format(".\\Lists\\namelist_{0}.txt", index);
             try
@@ -145,11 +152,14 @@ namespace NameGen
             object[] res = m_luaInterface.Call(method, null);
             try
             {
-                tbxName.Text = (String)res[0];
+                LuaInterface.LuaTable namelist = (LuaInterface.LuaTable)res[0];
+                foreach (object key in namelist.Keys)
+                    tbxName.Text = namelist[key].ToString();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                m_log.Error("The script returned a null value.");
+                m_log.Error("Unable to convert " + cbxGenMethod.Text + ".GetName() result to a Lua table.", ex);
+                return;
             }
         }
     }

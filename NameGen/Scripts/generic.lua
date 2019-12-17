@@ -7,21 +7,29 @@ generic = {};
 generic["FirstNames"] = {};
 generic["LastNames"] = {};
 
-function generic.GetName()
+function generic.GetName(namecount)
+	if namecount == nil then
+		namecount = 1;
+	end
 	if utilities.tablelength(generic.FirstNames) < 1 then
 		generic.loadFirstNames();
 	end
 	if utilities.tablelength(generic.LastNames) < 1 then
 		generic.loadLastNames();
 	end
-	local count = utilities.tablelength(generic.FirstNames);
+
+	local fcount = utilities.tablelength(generic.FirstNames);
 	--csLog.LogInfo("generic.lua", tostring(count) .. " first names...");
-	local first = generic.FirstNames[math.random(1, count)];
-	count = utilities.tablelength(generic.LastNames);
+	local lcount = utilities.tablelength(generic.LastNames);
 	--csLog.LogInfo("generic.lua", tostring(count) .. " last names...");
-	local last = generic.LastNames[math.random(1, count)];
-	local name = tostring(first) .. " " .. tostring(last);
-	return name;
+	local names = {};
+	for i = 1, namecount do
+		local first = generic.FirstNames[math.random(1, fcount)];
+		local last = generic.LastNames[math.random(1, lcount)];
+		local name = tostring(first) .. " " .. tostring(last);
+		table.insert(names, name);
+	end
+	return names;
 end
 
 function generic.loadFirstNames()

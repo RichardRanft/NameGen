@@ -7,19 +7,29 @@ Illumian = {};
 Illumian["Syllables"] = {};
 Illumian["ClanNames"] = {};
 
-function Illumian.GetName()
+function Illumian.GetName(namecount)
+	if namecount == nil then
+		namecount = 1;
+		csLog.LogInfo("Illumian.lua", "namecount is nil, setting to 1");
+	end
 	if utilities.tablelength(Illumian.Syllables) < 1 then
 		Illumian.loadSyllables();
 	end
 	if utilities.tablelength(Illumian.ClanNames) < 1 then
 		Illumian.loadClanNames();
 	end
-	local first = Illumian.GetPersonalName();
-	first = first:gsub("^%l", string.upper); -- uppercase first character
-	local last = Illumian.GetClanName();
-	last = last:gsub("^%l", string.upper); -- uppercase first character
-	local name = tostring(last) .. " " .. tostring(first);
-	return name;
+	local names = {};
+	for i = 1, namecount do
+		csLog.LogInfo("Illumian.lua", "GetName() generating " .. tostring(i));
+		local first = Illumian.GetPersonalName();
+		first = first:gsub("^%l", string.upper); -- uppercase first character
+		local last = Illumian.GetClanName();
+		last = last:gsub("^%l", string.upper); -- uppercase first character
+		local name = tostring(last) .. " " .. tostring(first);
+		table.insert(names, name);
+	end
+	csLog.LogInfo("Illumian.lua", "GetName() returning " .. tostring(utilities.tablelength(names)) .. " names");
+	return names;
 end
 
 function Illumian.GetPersonalName()

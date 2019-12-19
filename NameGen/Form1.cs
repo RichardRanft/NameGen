@@ -90,7 +90,9 @@ namespace NameGen
                 }
                 catch (Exception ex)
                 {
-                    m_log.Error("Unable to create directory:", ex);
+                    String msg = "Unable to create list directory";
+                    m_log.Error(msg, ex);
+                    MessageBox.Show(msg, "Error Generating Names");
                     return;
                 }
             }
@@ -128,7 +130,9 @@ namespace NameGen
             }
             catch(Exception ex)
             {
-                m_log.Error("Unable to convert " + cbxGenMethod.Text + ".GetName() result to a Lua table.", ex);
+                String msg = "Unable to convert " + cbxGenMethod.Text + ".GetName() result to a Lua table.";
+                m_log.Error(msg, ex);
+                MessageBox.Show(msg, "Error Generating Names");
                 return;
             }
             String outfile = String.Format(".\\Lists\\namelist_{0}.txt", index);
@@ -142,7 +146,9 @@ namespace NameGen
             }
             catch (Exception ex)
             {
-                m_log.Error("Error writing " + outfile, ex);
+                String msg = "Error writing " + outfile;
+                m_log.Error(msg, ex);
+                MessageBox.Show(msg, "Error Writing Names");
             }
         }
 
@@ -158,7 +164,9 @@ namespace NameGen
             }
             catch (Exception ex)
             {
-                m_log.Error("Unable to convert " + cbxGenMethod.Text + ".GetName() result to a Lua table.", ex);
+                String msg = "Unable to convert " + cbxGenMethod.Text + ".GetName() result to a Lua table.";
+                m_log.Error(msg, ex);
+                MessageBox.Show(msg, "Error Generating Names");
                 return;
             }
         }

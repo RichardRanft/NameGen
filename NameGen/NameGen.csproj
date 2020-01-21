@@ -108,6 +108,7 @@
     <Content Include="Scripts\Illumian.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Scripts\Illumian_b.lua" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

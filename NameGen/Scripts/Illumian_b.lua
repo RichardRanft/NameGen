@@ -8,6 +8,8 @@ Illumian_b["Seed"] = 0;
 Illumian_b["Syllables"] = {};
 Illumian_b["FirstNames"] = {};
 Illumian_b["LastNames"] = {};
+Illumian_b["SyllableLen"] = 3;
+Illumian_b["Multiplier"] = 4096;
 
 function Illumian_b.GetName(namecount)
 	if namecount == nil then
@@ -41,6 +43,7 @@ function Illumian_b.GetName(namecount)
 	local names = {};
 	for entry in utilities.list_iter(nameTbl) do
 		local name = Illumian_b.TranslateName(entry.First, entry.Last);
+		--csLog.LogInfo("Illumian_b.lua", "GetName() " .. entry.First .. " " .. entry.Last .. " : " .. name);
 		table.insert(names, name);
 	end
 	return names;
@@ -49,14 +52,14 @@ end
 function Illumian_b.TranslateName(first, last)
 	count = utilities.tablelength(Illumian_b.Syllables);
 	local name = "";
-	local scount = math.floor(string.len(first) / 3) + 1;
+	local scount = math.floor(string.len(first) / Illumian_b.SyllableLen) + 1;
 	math.randomseed(Illumian_b.GetSeed(first));
 	local fname = "";
 	for i = 1, scount do
 		fname = fname .. Illumian_b.Syllables[math.random(1, count)];
 	end
 	fname = fname:gsub("^%l", string.upper); -- uppercase first character
-	scount = math.floor(string.len(last) / 3) + 1;
+	scount = math.floor(string.len(last) / Illumian_b.SyllableLen) + 1;
 	math.randomseed(Illumian_b.GetSeed(last));
 	local lname = "";
 	for i = 1, scount do
@@ -82,19 +85,24 @@ function Illumian_b.GetClanName()
 end
 
 function Illumian_b.GetSeed(tempName)
-	local seed = 0;
+	local seed = 1;
 	local seedstr = string.lower(tempName);
+	local seeds = {};
+	local eos = i;
+	local c = string.sub(seedstr, 1, 1);
+	table.insert(seeds, tonumber(string.byte(tostring(c))));
 	for i = 1, string.len(seedstr) do
-		local eos = i;
-		local c = string.sub(seedstr, i, eos);
-		--csLog.LogInfo("Illumian_b.lua", "GetSeed() - seed character at " .. tostring(sindex) .. " is " .. tostring(c));
-		seed = seed + tonumber(string.byte(tostring(c)));
+		eos = i;
+		c = string.sub(seedstr, i, eos);
+		if string.len(seedstr) < Illumian_b.SyllableLen then
+			table.insert(seeds, tonumber(string.byte(tostring(c))));
+		elseif i%Illumian_b.SyllableLen == 0 then
+			table.insert(seeds, tonumber(string.byte(tostring(c))));
+		end
 	end
-	--csLog.LogInfo("Illumian_b.lua", "GetSeed() - seed total is " .. tostring(seed));
-	--csLog.LogInfo("Illumian_b.lua", "GetSeed() - divide " .. tostring(Illumian_b.Seed) .. " by " .. tostring(seed));
-	local snum = Illumian_b.Seed / seed;
-	seed = math.floor(tonumber(snum));
-	--csLog.LogInfo("Illumian_b.lua", "GetSeed() - seed is " .. tostring(seed));
+	for s in utilities.list_iter(seeds) do
+		seed = (seed / Illumian_b.SyllableLen) + seed + (s * Illumian_b.Multiplier);
+	end
 	return seed;
 end
 

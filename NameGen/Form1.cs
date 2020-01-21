@@ -96,16 +96,17 @@ namespace NameGen
                     return;
                 }
             }
-            String[] files = Directory.GetFiles(".\\Lists", "*.txt");
+            String filter = String.Format("namelist_{0}_*.txt", cbxGenMethod.Text);
+            String[] files = Directory.GetFiles(".\\Lists", filter);
             int index = 1;
             if (files.Length > 0)
             {
                 foreach (String file in files)
                 {
                     String[] parts = file.Split('_');
-                    if (parts.Length < 2)
+                    if (parts.Length < 3)
                         continue;
-                    String[] subparts = parts[1].Split('.');
+                    String[] subparts = parts[parts.Length - 1].Split('.');
                     try
                     {
                         int filenum = int.Parse(subparts[0]);
@@ -135,7 +136,7 @@ namespace NameGen
                 MessageBox.Show(msg, "Error Generating Names");
                 return;
             }
-            String outfile = String.Format(".\\Lists\\namelist_{0}.txt", index);
+            String outfile = String.Format(".\\Lists\\namelist_{0}_{1}.txt", cbxGenMethod.Text, index);
             try
             {
                 using (StreamWriter sw = new StreamWriter(outfile))

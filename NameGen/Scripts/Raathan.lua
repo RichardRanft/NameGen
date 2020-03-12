@@ -46,7 +46,6 @@ function Raathan.GetPersonalName()
 	return name;
 end
 
-
 function Raathan.GetClanName()
 	local count1 = utilities.tablelength(Raathan.ClanNames[1]);
 	local count2 = utilities.tablelength(Raathan.ClanNames[2]);
@@ -54,9 +53,14 @@ function Raathan.GetClanName()
 	local clan2 = Raathan.ClanNames[2][math.random(1, count2)];
 	if string.find(clan1, "%[") ~= nil then
 		clan1 = Raathan.ClanParts[clan1][math.random(1, utilities.tablelength(Raathan.ClanParts[clan1]))];
-	end
-	if string.find(clan2, "%[") ~= nil then
+		while string.find(clan2, "%[") ~= nil do
+			clan2 = Raathan.ClanNames[2][math.random(1, count2)];
+		end
+	elseif string.find(clan2, "%[") ~= nil then
 		clan2 = Raathan.ClanParts[clan2][math.random(1, utilities.tablelength(Raathan.ClanParts[clan2]))];
+		while string.find(clan1, "%[") ~= nil do
+			clan1 = Raathan.ClanNames[1][math.random(1, count1)];
+		end
 	end
 	local clan = clan1 .. clan2;
 	return clan;

@@ -54,9 +54,14 @@ function Illumian.GetClanName()
 	local clan2 = Illumian.ClanNames[2][math.random(1, count2)];
 	if string.find(clan1, "%[") ~= nil then
 		clan1 = Illumian.ClanParts[clan1][math.random(1, utilities.tablelength(Illumian.ClanParts[clan1]))];
-	end
-	if string.find(clan2, "%[") ~= nil then
+		while string.find(clan2, "%[") ~= nil do
+			clan2 = Illumian.ClanNames[2][math.random(1, count2)];
+		end
+	elseif string.find(clan2, "%[") ~= nil then
 		clan2 = Illumian.ClanParts[clan2][math.random(1, utilities.tablelength(Illumian.ClanParts[clan2]))];
+		while string.find(clan1, "%[") ~= nil do
+			clan1 = Illumian.ClanNames[1][math.random(1, count1)];
+		end
 	end
 	local clan = clan1 .. clan2;
 	return clan;
